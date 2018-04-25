@@ -1,0 +1,67 @@
+create tablespace mid_term
+datafile 'julian_noguera1.dbf' size 35M;
+
+
+CREATE PROFILE EXAM LIMIT
+IDLE_TIME                       15
+FAILED_LOGIN_ATTEMPTS           1;
+
+create user ejercicios
+identified by ejercicios
+default tablespace mid_term
+quota UNLIMITED on mid_term
+profile EXAM;
+grant DBA, connect to ejercicios
+
+
+
+create table ORDERS
+(
+    ID number(*,0) not null primary key,
+    AMOUNT number(8,2),
+    ORDER_DATE DATE,
+    CUSTOMER_ID number(*,0),
+    SALESMAN_ID number(*,0)
+);
+
+create table CUSTOMERS
+(
+    ID number(*,0) not null primary key,
+    NAME varchar2(255 byte),
+    CITY varchar2(255 byte),
+    GRADE number(*,0),
+    SALESMAN_ID number(*,0)
+);
+ALTER TABLE CUSTOMERS
+RENAME COLUMN CITY TO COUNTRY;
+create table SALESMAN
+(
+    ID number(*,0) not null primary key,
+    NAME varchar2(255 byte),
+    CITY varchar2(255 byte),
+    COMMISSION number(5,2)
+);
+ALTER TABLE SALESMAN
+RENAME COLUMN CITY TO COUNTRY;
+
+ALTER TABLE ORDERS
+ADD CONSTRAINT CUSTOMER_ORDER_FK
+  FOREIGN KEY (CUSTOMER_ID)
+  REFERENCES CUSTOMERS(ID);
+  
+  ALTER TABLE ORDERS
+ADD CONSTRAINT SALESMAN_ORDER_FK
+  FOREIGN KEY (SALESMAN_ID)
+  REFERENCES SALESMAN(ID);
+  
+  ALTER TABLE CUSTOMERS
+ADD CONSTRAINT SALESMAN_FK
+  FOREIGN KEY (SALESMAN_ID)
+  REFERENCES SALESMAN(ID);
+  
+  
+  CREATE VIEW VIEW_1 AS
+  SELECT S.ID AS SALESMAN_ID ,S.NAME AS SALESMAN_NAME,C.ID AS CUSTOMER_ID,C.NAME AS CUSTOMER_NAME FROM SALESMAN S INNER JOIN CUSTOMERS C ON S.ID = C.SALESMAN_ID;
+  
+  CREATE VIEW_2
+  SELECT O.ID AS ORDER_ID,O.ORDER_DATE AS ORDER_DATE,O.AMOUNT AS ORDER_AMOUNT,C.ID AS CUSTOMER_ID,C.NAME CUSTOMER_NAME,S.ID AS SALESNAME_ID,S.NAME AS SALESMAN_NAME, S.COMMISSION AS SALESMAN_COMMISSION INNER JOIN 
